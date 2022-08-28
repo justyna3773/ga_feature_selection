@@ -1,0 +1,1257 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Aglomera</name>
+    </assembly>
+    <members>
+        <member name="T:Aglomera.AgglomerativeClusteringAlgorithm`1">
+            <summary>
+                Implements the agglomerative nesting clustering algorithm (program AGNES) in [1].
+            </summary>
+            <typeparam name="TInstance">The type of instance considered.</typeparam>
+            <remarks>
+                [1] Kaufman, L., &amp; Rousseeuw, P. J. (1990). Agglomerative nesting (program AGNES). Finding Groups in Data: An
+                Introduction to Cluster Analysis, 199-252.
+            </remarks>
+        </member>
+        <member name="M:Aglomera.AgglomerativeClusteringAlgorithm`1.#ctor(Aglomera.Linkage.ILinkageCriterion{`0})">
+            <summary>
+                Creates a new instance of <see cref="T:Aglomera.AgglomerativeClusteringAlgorithm`1" /> with the given set of
+                instances and linkage
+                criterion.
+            </summary>
+            <param name="linkageCriterion">The criterion used to measure dissimilarities within and between clusters.</param>
+        </member>
+        <member name="P:Aglomera.AgglomerativeClusteringAlgorithm`1.LinkageCriterion">
+            <inheritdoc />
+        </member>
+        <member name="M:Aglomera.AgglomerativeClusteringAlgorithm`1.GetClustering(System.Collections.Generic.ISet{`0})">
+            <inheritdoc />
+        </member>
+        <member name="M:Aglomera.AgglomerativeClusteringAlgorithm`1.GetClustering(Aglomera.ClusterSet{`0})">
+            <inheritdoc />
+        </member>
+        <member name="M:Aglomera.AgglomerativeClusteringAlgorithm`1.GetClustering(System.Collections.Generic.IEnumerable{Aglomera.Cluster{`0}},System.Double)">
+            <inheritdoc />
+        </member>
+        <member name="T:Aglomera.CachedDissimilarityMetric`1">
+            <summary>
+                Represents a cache to store dissimilarities between all instances of a known set, as dictated by a base
+                <see cref="T:Aglomera.IDissimilarityMetric`1" />.
+            </summary>
+            <remarks>
+                This class is useful to use during the execution of <see cref="T:Aglomera.AgglomerativeClusteringAlgorithm`1" /> as many
+                <see cref="T:Aglomera.Linkage.ILinkageCriterion`1" /> classes rely on pair-wise dissimilarities between the
+                instances.
+                In that sense, the set of instances has to be known beforehand and must not change and no verification is done in
+                <see cref="M:Aglomera.CachedDissimilarityMetric`1.Calculate(`0,`0)" />.
+                This means that if cluster centroids are used to measure dissimilarities, they have to be included in the original
+                set, otherwise the value will not be present in the cache.
+            </remarks>
+            <typeparam name="TInstance"></typeparam>
+        </member>
+        <member name="M:Aglomera.CachedDissimilarityMetric`1.#ctor(Aglomera.IDissimilarityMetric{`0},System.Collections.Generic.ISet{`0})">
+            <summary>
+                Creates a new <see cref="T:Aglomera.CachedDissimilarityMetric`1" /> according to the given base dissimilarity metric
+                and the known set of instances.
+            </summary>
+            <param name="dissimilarityMeasure">The metric to be used to cache the dissimilarities between all instances.</param>
+            <param name="allInstances">The set of instances for which to calculate the pair-wise dissimilarities.</param>
+        </member>
+        <member name="M:Aglomera.CachedDissimilarityMetric`1.Dispose">
+            <inheritdoc />
+        </member>
+        <member name="M:Aglomera.CachedDissimilarityMetric`1.Calculate(`0,`0)">
+            <inheritdoc />
+        </member>
+        <member name="T:Aglomera.Cluster`1">
+            <summary>
+                Represents a set of <typeparamref name="TInstance" /> elements arranged in a hierarchical form.
+            </summary>
+            <typeparam name="TInstance">The type of instance considered.</typeparam>
+        </member>
+        <member name="F:Aglomera.Cluster`1.Empty">
+            <summary>
+                Gets an empty cluster.
+            </summary>
+        </member>
+        <member name="M:Aglomera.Cluster`1.#ctor(Aglomera.Cluster{`0},Aglomera.Cluster{`0},System.Double)">
+            <summary>
+                Creates a new <see cref="T:Aglomera.Cluster`1" /> by joining the two given clusters.
+            </summary>
+            <param name="parent1">The first parent of the new cluster.</param>
+            <param name="parent2">The second parent of the new cluster.</param>
+            <param name="dissimilarity">The dissimilarity/distance at which the new cluster was found.</param>
+        </member>
+        <member name="M:Aglomera.Cluster`1.#ctor(`0,System.Double)">
+            <summary>
+                Creates a new <see cref="T:Aglomera.Cluster`1" /> with a single <typeparamref name="TInstance" /> element.
+            </summary>
+            <param name="instance">The single element in the new cluster.</param>
+            <param name="dissimilarity">The dissimilarity/distance at which the new cluster was found.</param>
+        </member>
+        <member name="M:Aglomera.Cluster`1.#ctor(System.Collections.Generic.IEnumerable{`0},System.Double)">
+            <summary>
+                Creates a new <see cref="T:Aglomera.Cluster`1" /> with the given <typeparamref name="TInstance" /> elements.
+            </summary>
+            <param name="instances">The elements in the new cluster.</param>
+            <param name="dissimilarity">The dissimilarity/distance at which the new cluster was found.</param>
+        </member>
+        <member name="M:Aglomera.Cluster`1.#ctor(Aglomera.Cluster{`0})">
+            <summary>
+                Creates a new <see cref="T:Aglomera.Cluster`1" /> which is an exact copy of the given cluster.
+            </summary>
+            <param name="cluster">The cluster to be copied into the new cluster.</param>
+        </member>
+        <member name="P:Aglomera.Cluster`1.Count">
+            <summary>
+                Gets the number of elements in this cluster.
+            </summary>
+        </member>
+        <member name="P:Aglomera.Cluster`1.Dissimilarity">
+            <summary>
+                Gets the dissimilarity / distance at which this cluster was found by the clustering algorithm.
+            </summary>
+        </member>
+        <member name="P:Aglomera.Cluster`1.Parent1">
+            <summary>
+                Gets this cluster's first parent, if the cluster was formed by joining two existing clusters. Otherwise returns
+                <c>null</c>.
+            </summary>
+        </member>
+        <member name="P:Aglomera.Cluster`1.Parent2">
+            <summary>
+                Gets this cluster's second parent, if the cluster was formed by joining two existing clusters. Otherwise returns
+                <c>null</c>.
+            </summary>
+        </member>
+        <member name="M:Aglomera.Cluster`1.Equals(System.Object)">
+            <inheritdoc />
+        </member>
+        <member name="M:Aglomera.Cluster`1.GetHashCode">
+            <inheritdoc />
+        </member>
+        <member name="M:Aglomera.Cluster`1.ToString">
+            <summary>
+                Gets a string representing this cluster in the form (item1;item2;...;itemN).
+            </summary>
+            <returns>A string representing the cluster.</returns>
+        </member>
+        <member name="M:Aglomera.Cluster`1.Clone">
+            <summary>
+                Creates a new <see cref="T:Aglomera.Cluster`1" /> which is an exact copy of this cluster.
+            </summary>
+            <returns>A new <see cref="T:Aglomera.Cluster`1" /> which is an exact copy of this cluster.</returns>
+        </member>
+        <member name="M:Aglomera.Cluster`1.Contains(`0)">
+            <summary>
+                Checks whether this cluster contains the given item.
+            </summary>
+            <param name="item">The item whose presence in the cluster we want to check.</param>
+            <returns><c>true</c> if the cluster contains the given item, <c>false</c> otherwise.</returns>
+        </member>
+        <member name="M:Aglomera.Cluster`1.CompareTo(Aglomera.Cluster{`0})">
+            <summary>
+                Compares this cluster with another cluster instance. Comparison is performed by count (number of items) first, then
+                by string representation of the items.
+            </summary>
+            <param name="other">The cluster to compare to.</param>
+            <returns>
+                <c>-1</c> if <paramref name="other" /> is <c>null</c>, the result of <see cref="P:Aglomera.Cluster`1.Count" /> comparison between
+                the clusters, or the result of <c>string.CompareOrdinal"</c> if the clusters have the same count.
+            </returns>
+        </member>
+        <member name="M:Aglomera.Cluster`1.GetEnumerator">
+            <inheritdoc />
+        </member>
+        <member name="M:Aglomera.Cluster`1.Equals(Aglomera.Cluster{`0})">
+            <summary>
+                Checks whether this cluster is equal to another. Equality between cluster occurs when they are the same object or
+                when the clusters contain the same elements, were created based on the same parent clusters and have the same
+                associated dissimilarity.
+            </summary>
+            <param name="other">The other cluster to verify equality.</param>
+            <returns><c>true</c> if the clusters are equal, <c>false</c> otherwise.</returns>
+        </member>
+        <member name="T:Aglomera.ClusteringResult`1">
+            <summary>
+                Represents the result of a clustering algorithm, consisting in the sequence of <see cref="T:Aglomera.ClusterSet`1" />
+                elements that were found during the agglomeration of all clusters.
+            </summary>
+            <typeparam name="TInstance">The type of instance considered.</typeparam>
+        </member>
+        <member name="M:Aglomera.ClusteringResult`1.#ctor(System.Int32)">
+            <summary>
+                Creates a new <see cref="T:Aglomera.ClusteringResult`1" /> of the given size.
+            </summary>
+            <param name="size">The maximum number of <see cref="T:Aglomera.ClusterSet`1" /> to be added by the algorithm.</param>
+        </member>
+        <member name="P:Aglomera.ClusteringResult`1.Count">
+            <summary>
+                Gets the number of <see cref="T:Aglomera.ClusterSet`1" /> found by the algorithm.
+            </summary>
+        </member>
+        <member name="P:Aglomera.ClusteringResult`1.Item(System.Int32)">
+            <summary>
+                Gets or sets the <see cref="T:Aglomera.ClusterSet`1" /> at the given index of the sequence.
+            </summary>
+            <param name="index">The index of the cluster set we want to get or set.</param>
+            <returns>The <see cref="T:Aglomera.ClusterSet`1" /> at the given index of the sequence.</returns>
+        </member>
+        <member name="P:Aglomera.ClusteringResult`1.SingleCluster">
+            <summary>
+                Gets the <see cref="T:Aglomera.Cluster`1" /> corresponding to the agglomeration of all the
+                <typeparamref name="TInstance" />
+                elements considered by the algorithm.
+            </summary>
+        </member>
+        <member name="M:Aglomera.ClusteringResult`1.SaveToCsv(System.String,System.Char)">
+            <summary>
+                Saves the <see cref="T:Aglomera.ClusterSet`1" /> objects stored in this <see cref="T:Aglomera.ClusteringResult`1" /> in
+                a comma-separated values (CSV) file.
+            </summary>
+            <param name="filePath">The path to the file in which to save the clustering results.</param>
+            <param name="sepChar">The character used to separate the fields in the CSV file.</param>
+        </member>
+        <member name="M:Aglomera.ClusteringResult`1.GetEnumerator">
+            <inheritdoc />
+        </member>
+        <member name="T:Aglomera.ClusterSet`1">
+            <summary>
+                Represents a set of <see cref="T:Aglomera.Cluster`1" /> elements that were found during the execution of the
+                clustering algorithm separated at some minimum distance.
+            </summary>
+            <typeparam name="TInstance">The type of instance considered.</typeparam>
+        </member>
+        <member name="M:Aglomera.ClusterSet`1.#ctor(Aglomera.Cluster{`0}[],System.Double)">
+            <summary>
+                Creates a new <see cref="T:Aglomera.ClusterSet`1" /> with the given clusters and distance.
+            </summary>
+            <param name="clusters">The set of clusters.</param>
+            <param name="dissimilarity">The dissimilarity/distance at which the clusters were found.</param>
+        </member>
+        <member name="P:Aglomera.ClusterSet`1.Count">
+            <summary>
+                Gets the number of clusters.
+            </summary>
+        </member>
+        <member name="P:Aglomera.ClusterSet`1.Dissimilarity">
+            <summary>
+                The minimum dissimilarity/distance at which the clusters were found.
+            </summary>
+        </member>
+        <member name="P:Aglomera.ClusterSet`1.Item(System.Int32)">
+            <summary>
+                Gets the cluster at the give index.
+            </summary>
+        </member>
+        <member name="M:Aglomera.ClusterSet`1.ToString">
+            <summary>
+                Returns a string representation for the cluster-set in the form 'Dissimilarity   {cluster1, cluster2, ...,
+                clusterN}'.
+            </summary>
+            <returns>A string representation for the cluster-set.</returns>
+        </member>
+        <member name="M:Aglomera.ClusterSet`1.ToString(System.Boolean)">
+            <summary>
+                Returns a string representation for the cluster-set in the form 'Dissimilarity   {cluster1, cluster2, ...,
+                clusterN}'. The presentation of the dissimilarity value is optional.
+            </summary>
+            <param name="includeDissimilarity">
+                Whether to include the value of <see cref="P:Aglomera.ClusterSet`1.Dissimilarity" /> in the string representation.
+            </param>
+            <returns>A string representation for the cluster-set.</returns>
+        </member>
+        <member name="M:Aglomera.ClusterSet`1.GetEnumerator">
+            <inheritdoc />
+        </member>
+        <member name="T:Aglomera.ClusterSetEvaluation`1">
+            <summary>
+                Represents the result of evaluating some <see cref="T:Aglomera.ClusterSet`1" /> according to some criterion.
+            </summary>
+            <typeparam name="TInstance">The type of instance considered.</typeparam>
+        </member>
+        <member name="M:Aglomera.ClusterSetEvaluation`1.#ctor(Aglomera.ClusterSet{`0},System.Double)">
+            <summary>
+                Creates a new <see cref="T:Aglomera.ClusterSetEvaluation`1" />.
+            </summary>
+            <param name="clusterSet">The cluster-set that was evaluated.</param>
+            <param name="evaluationValue">The value of the evaluation.</param>
+        </member>
+        <member name="P:Aglomera.ClusterSetEvaluation`1.ClusterSet">
+            <summary>
+                Gets the cluster-set that was evaluated.
+            </summary>
+        </member>
+        <member name="P:Aglomera.ClusterSetEvaluation`1.EvaluationValue">
+            <summary>
+                Gets the value of the evaluation.
+            </summary>
+        </member>
+        <member name="M:Aglomera.ClusterSetEvaluation`1.ToString">
+            <inheritdoc />
+        </member>
+        <member name="T:Aglomera.Combinatorics">
+            <summary>
+                A utility class containing combinatorics methods.
+            </summary>
+        </member>
+        <member name="M:Aglomera.Combinatorics.GetCombinations(System.Int64,System.Int64)">
+            <summary>
+                Gets the number of possible combinations (without repetition) according to the given number of elements and
+                combination size.
+            </summary>
+            <param name="n">The number of elements in the set.</param>
+            <param name="k">The number of elements to choose from the set (combination size).</param>
+            <returns>The number of possible combinations (without repetition).</returns>
+            <remarks>See <a href="http://www.mathwords.com/c/combination_formula.htm" />.</remarks>
+        </member>
+        <member name="M:Aglomera.Combinatorics.GetFactorial(System.Int64)">
+            <summary>
+                Computes the factorial function n! of a given integer number > 0.
+            </summary>
+            <param name="n">The number whose factorial we want to determine.</param>
+            <returns>The factorial n! of the given number.</returns>
+        </member>
+        <member name="M:Aglomera.Combinatorics.GetPermutations(System.Int64,System.Int64)">
+            <summary>
+                Returns the number of possible permutations of k elements from a set of n (without repetition).
+            </summary>
+            <param name="n">The number of elements in the set.</param>
+            <param name="k">The number of elements to choose from the set (permutation size).</param>
+            <returns></returns>
+            <remarks>See <a href="http://www.mathwords.com/p/permutation_formula.htm" />.</remarks>
+        </member>
+        <member name="T:Aglomera.CentroidFunction`1">
+            <summary>
+                Represents a delegate for functions calculating the centroids of <see cref="T:Aglomera.Cluster`1" /> objects, i.e.,
+                they calculate the representative element of a given cluster.
+            </summary>
+            <param name="cluster">The cluster whose representative we want to retrieve.</param>
+            <returns>The representative of the given cluster according to some criterion defined by this function.</returns>
+            <typeparam name="TInstance">The type of instance considered.</typeparam>
+        </member>
+        <member name="T:Aglomera.Evaluation.External.CombinedExternalCriterion`2">
+            <summary>
+                Implements an external clustering evaluation criterion as a combination (weighted average) of other
+                <see cref="T:Aglomera.Evaluation.External.IExternalEvaluationCriterion`2" />.
+            </summary>
+            <typeparam name="TInstance">The type of instance considered.</typeparam>
+            <typeparam name="TClass">The type of class considered.</typeparam>
+        </member>
+        <member name="M:Aglomera.Evaluation.External.CombinedExternalCriterion`2.#ctor(System.Collections.Generic.IDictionary{Aglomera.Evaluation.External.IExternalEvaluationCriterion{`0,`1},System.Double})">
+            <summary>
+                Creates a new <see cref="T:Aglomera.Evaluation.External.CombinedExternalCriterion`2" /> according to the given criteria and
+                respective weights.
+            </summary>
+            <param name="criteria">
+                A dictionary containing the several criteria to be used and how should they be combined, i.e., their associated
+                weights.
+            </param>
+        </member>
+        <member name="M:Aglomera.Evaluation.External.CombinedExternalCriterion`2.Evaluate(Aglomera.ClusterSet{`0},System.Collections.Generic.IDictionary{`0,`1})">
+            <inheritdoc />
+        </member>
+        <member name="T:Aglomera.Evaluation.External.FMeasure`2">
+            <summary>
+                Evaluates the given partition according to the F-measure, i.e., it measures the accuracy of the clustering by
+                measuring the percentage of decisions that are correct (true positives + true negatives).
+            </summary>
+            <typeparam name="TInstance">The type of instance considered.</typeparam>
+            <typeparam name="TClass">The type of class considered.</typeparam>
+            <remarks>
+                see: <a href="https://nlp.stanford.edu/IR-book/html/htmledition/evaluation-of-clustering-1.html" />
+            </remarks>
+        </member>
+        <member name="M:Aglomera.Evaluation.External.FMeasure`2.#ctor(System.Double)">
+            <summary>
+                Creates a new instance of <see cref="T:Aglomera.Evaluation.External.FMeasure`2" /> with the given recall weight.
+            </summary>
+            <param name="recallWeight">The weight given to recall in comparison to precision.</param>
+        </member>
+        <member name="P:Aglomera.Evaluation.External.FMeasure`2.RecallWeight">
+            <summary>
+                Gets the weight given to recall in comparison to precision.
+            </summary>
+        </member>
+        <member name="M:Aglomera.Evaluation.External.FMeasure`2.Evaluate(Aglomera.ClusterSet{`0},System.Collections.Generic.IDictionary{`0,`1})">
+            <inheritdoc />
+        </member>
+        <member name="T:Aglomera.Evaluation.External.IExternalEvaluationCriterion`2">
+            <summary>
+                Represents an interface for external criteria to evaluate how well the result of
+                <see cref="T:Aglomera.AgglomerativeClusteringAlgorithm`1" /> matches the classification of instances according to a set of gold
+                standard classes. We can think of this as supervised clustering evaluation methods, i.e., external validation
+                methods.
+            </summary>
+            <remarks>
+                These methods are useful for when we have some known partition over the instances and want to evaluate the quality
+                of the clustering according to that partition. It can also be used to select the most appropriate
+                <see cref="T:Aglomera.Linkage.ILinkageCriterion`1" /> for a given annotated data-set.
+            </remarks>
+            <typeparam name="TInstance">The type of instance considered.</typeparam>
+            <typeparam name="TClass">The type of class considered.</typeparam>
+        </member>
+        <member name="M:Aglomera.Evaluation.External.IExternalEvaluationCriterion`2.Evaluate(Aglomera.ClusterSet{`0},System.Collections.Generic.IDictionary{`0,`1})">
+            <summary>
+                Evaluates a given <see cref="T:Aglomera.ClusterSet`1" /> partition according to the given class partition.
+            </summary>
+            <param name="clusterSet">The clustering partition.</param>
+            <param name="instanceClasses">The instances' classes.</param>
+            <returns>The evaluation of the given clustering according to this criterion.</returns>
+        </member>
+        <member name="T:Aglomera.Evaluation.External.NormalizedMutualInformation`2">
+            <summary>
+                Evaluates the given partition according to the normalized mutual information criterion that measures the amount of
+                information by which our knowledge about the classes increases when we are told what the clusters are.
+            </summary>
+            <typeparam name="TInstance">The type of instance considered.</typeparam>
+            <typeparam name="TClass">The type of class considered.</typeparam>
+            <remarks>
+                see: <a href="https://nlp.stanford.edu/IR-book/html/htmledition/evaluation-of-clustering-1.html" />
+            </remarks>
+        </member>
+        <member name="M:Aglomera.Evaluation.External.NormalizedMutualInformation`2.Evaluate(Aglomera.ClusterSet{`0},System.Collections.Generic.IDictionary{`0,`1})">
+            <inheritdoc />
+        </member>
+        <member name="T:Aglomera.Evaluation.External.Precision`2">
+            <summary>
+                Evaluates the given partition according to the precision criterion, given by the percentage of true positives over
+                all positives.
+            </summary>
+            <typeparam name="TInstance">The type of instance considered.</typeparam>
+            <typeparam name="TClass">The type of class considered.</typeparam>
+            <remarks>
+                see: <a href="https://nlp.stanford.edu/IR-book/html/htmledition/evaluation-of-clustering-1.html" />
+            </remarks>
+        </member>
+        <member name="M:Aglomera.Evaluation.External.Precision`2.Evaluate(Aglomera.ClusterSet{`0},System.Collections.Generic.IDictionary{`0,`1})">
+            <inheritdoc />
+        </member>
+        <member name="T:Aglomera.Evaluation.External.Purity`2">
+            <summary>
+                Evaluates the given partition according to the purity criterion, where each cluster is assigned to its most
+                frequent class, and then the accuracy of this assignment is measured by counting the number of correctly assigned
+                instances and dividing by the total number of instances.
+            </summary>
+            <typeparam name="TInstance">The type of instance considered.</typeparam>
+            <typeparam name="TClass">The type of class considered.</typeparam>
+            <remarks>
+                see: <a href="https://nlp.stanford.edu/IR-book/html/htmledition/evaluation-of-clustering-1.html" />
+            </remarks>
+        </member>
+        <member name="M:Aglomera.Evaluation.External.Purity`2.Evaluate(Aglomera.ClusterSet{`0},System.Collections.Generic.IDictionary{`0,`1})">
+            <inheritdoc />
+        </member>
+        <member name="T:Aglomera.Evaluation.External.RandIndex`2">
+            <summary>
+                Evaluates the given partition according to the Rand index, i.e., it measures the accuracy of the clustering by
+                measuring the percentage of decisions that are correct (true positives + true negatives).
+            </summary>
+            <typeparam name="TInstance">The type of instance considered.</typeparam>
+            <typeparam name="TClass">The type of class considered.</typeparam>
+            <remarks>
+                see: <a href="https://nlp.stanford.edu/IR-book/html/htmledition/evaluation-of-clustering-1.html" />
+            </remarks>
+        </member>
+        <member name="M:Aglomera.Evaluation.External.RandIndex`2.Evaluate(Aglomera.ClusterSet{`0},System.Collections.Generic.IDictionary{`0,`1})">
+            <inheritdoc />
+        </member>
+        <member name="T:Aglomera.Evaluation.External.Recall`2">
+            <summary>
+                Evaluates the given partition according to the recall criterion, given by the percentage of true positives over
+                all relevant cases (true positives + false negatives).
+            </summary>
+            <typeparam name="TInstance">The type of instance considered.</typeparam>
+            <typeparam name="TClass">The type of class considered.</typeparam>
+            <remarks>
+                see: <a href="https://nlp.stanford.edu/IR-book/html/htmledition/evaluation-of-clustering-1.html" />
+            </remarks>
+        </member>
+        <member name="M:Aglomera.Evaluation.External.Recall`2.Evaluate(Aglomera.ClusterSet{`0},System.Collections.Generic.IDictionary{`0,`1})">
+            <inheritdoc />
+        </member>
+        <member name="T:Aglomera.Evaluation.Internal.CalinskiHarabaszIndex`1">
+            <summary>
+                Implements the internal evaluation method in [1] that measures compactness and separation of clusters
+                simultaneously. The numerator reflects the degree of separation in the way of how much the cluster centers are
+                spread, and the denominator corresponds to compactness, to reflect how close the within-cluster objects are
+                gathered around the cluster center.
+            </summary>
+            <remarks>
+                References:
+                [1] -
+                <see href="https://doi.org/10.1080/03610927408827101">
+                    Caliński, T., &amp; Harabasz, J. (1974). A dendrite method for cluster analysis. Communications in
+                    Statistics-theory and Methods, 3(1), 1-27.
+                </see>
+            </remarks>
+            <typeparam name="TInstance">The type of instance considered.</typeparam>
+        </member>
+        <member name="M:Aglomera.Evaluation.Internal.CalinskiHarabaszIndex`1.#ctor(Aglomera.IDissimilarityMetric{`0},Aglomera.CentroidFunction{`0})">
+            <summary>
+                Creates a new <see cref="T:Aglomera.Evaluation.Internal.DaviesBouldinIndex`1" /> with given dissimilarity metric.
+            </summary>
+            <param name="dissimilarityMetric">The metric used to calculate dissimilarity between cluster elements.</param>
+            <param name="centroidFunc">
+                A function to get an element representing the centroid of a <see cref="T:Aglomera.Cluster`1" />.
+            </param>
+        </member>
+        <member name="P:Aglomera.Evaluation.Internal.CalinskiHarabaszIndex`1.DissimilarityMetric">
+            <inheritdoc />
+        </member>
+        <member name="M:Aglomera.Evaluation.Internal.CalinskiHarabaszIndex`1.Evaluate(Aglomera.ClusterSet{`0})">
+            <inheritdoc />
+        </member>
+        <member name="T:Aglomera.Evaluation.Internal.CombinedInternalCriterion`1">
+            <summary>
+                Implements an internal clustering evaluation criterion as a combination (weighted average) of other
+                <see cref="T:Aglomera.Evaluation.Internal.IInternalEvaluationCriterion`1" />.
+            </summary>
+            <typeparam name="TInstance">The type of instance considered.</typeparam>
+        </member>
+        <member name="M:Aglomera.Evaluation.Internal.CombinedInternalCriterion`1.#ctor(System.Collections.Generic.IDictionary{Aglomera.Evaluation.Internal.IInternalEvaluationCriterion{`0},System.Double})">
+            <summary>
+                Creates a new <see cref="T:Aglomera.Evaluation.Internal.CombinedInternalCriterion`1" /> according to the given criteria and respective
+                weights.
+            </summary>
+            <param name="criteria">
+                A dictionary containing the several criteria to be used and how should they be combined, i.e., their associated
+                weights.
+            </param>
+        </member>
+        <member name="P:Aglomera.Evaluation.Internal.CombinedInternalCriterion`1.DissimilarityMetric">
+            <inheritdoc />
+        </member>
+        <member name="M:Aglomera.Evaluation.Internal.CombinedInternalCriterion`1.Evaluate(Aglomera.ClusterSet{`0})">
+            <inheritdoc />
+        </member>
+        <member name="T:Aglomera.Evaluation.Internal.DaviesBouldinIndex`1">
+            <summary>
+                Implements the internal evaluation method in [1] that measures the "ratio of the within cluster scatter to the
+                between cluster separation" [2].
+            </summary>
+            <remarks>
+                "It happens to be the average similarity between each cluster and its most similar one, averaged over all the
+                clusters[...]. This affirms the idea that no cluster has to be similar to another, and hence the best clustering
+                scheme essentially minimizes the Davies–Bouldin (BD) index" [2].
+                Notes:
+                - This implementation corresponds to - BD so that a higher index provides a better partitioning.
+                - This implementation returns <c>double.Nan</c> if the partition contains singleton clusters (undefined
+                dispersion).
+                References:
+                [1] -
+                <see href="https://doi.org/10.1109/TPAMI.1979.4766909">
+                    Davies, D. L., &amp; Bouldin, D. W. (1979). A cluster separation measure. IEEE transactions on pattern analysis
+                    and machine intelligence, (2), 224-227.
+                </see>
+                [2] - <see href="https://en.wikipedia.org/wiki/Davies%E2%80%93Bouldin_index" />
+            </remarks>
+            <typeparam name="TInstance">The type of instance considered.</typeparam>
+        </member>
+        <member name="M:Aglomera.Evaluation.Internal.DaviesBouldinIndex`1.#ctor(Aglomera.IDissimilarityMetric{`0},Aglomera.CentroidFunction{`0})">
+            <summary>
+                Creates a new <see cref="T:Aglomera.Evaluation.Internal.DaviesBouldinIndex`1" /> with given dissimilarity metric.
+            </summary>
+            <param name="dissimilarityMetric">The metric used to calculate dissimilarity between cluster elements.</param>
+            <param name="centroidFunc">
+                A function to get an element representing the centroid of a <see cref="T:Aglomera.Cluster`1" />.
+            </param>
+        </member>
+        <member name="P:Aglomera.Evaluation.Internal.DaviesBouldinIndex`1.DistanceExponent">
+            <summary>
+                Gets or sets the distance exponent.
+            </summary>
+        </member>
+        <member name="P:Aglomera.Evaluation.Internal.DaviesBouldinIndex`1.DissimilarityMetric">
+            <inheritdoc />
+        </member>
+        <member name="M:Aglomera.Evaluation.Internal.DaviesBouldinIndex`1.Evaluate(Aglomera.ClusterSet{`0})">
+            <inheritdoc />
+        </member>
+        <member name="T:Aglomera.Evaluation.Internal.DunnIndex`1">
+            <summary>
+                Implements the internal evaluation method in [1] that measures the ratio between the smallest distance between
+                observations not in the same cluster to the largest intra-cluster distance. The Dunn Index has a value between zero
+                and infinity, and a higher index indicates a better clustering.
+                The aim is to identify sets of clusters that are compact, with a small variance between members of the cluster, and
+                well separated, where the means of different clusters are sufficiently far apart, as compared to the within cluster
+                variance [2].
+            </summary>
+            <remarks>
+                Notes:
+                - This formulation has a peculiar problem, in that if one of the clusters is badly behaved, where the others are
+                tightly packed, since the denominator contains a 'max' term instead of an average term, the Dunn Index for that set
+                of clusters will be uncharacteristically low [2].
+                References:
+                [1] -
+                <see href="https://doi.org/10.1080/01969727308546046">
+                    Dunn, J. C. (1973). A fuzzy relative of the ISODATA process and its use in detecting compact well-separated
+                    clusters.
+                </see>
+                [2] - <see href="https://en.wikipedia.org/wiki/Dunn_index" />
+            </remarks>
+            <typeparam name="TInstance">The type of instance considered.</typeparam>
+        </member>
+        <member name="M:Aglomera.Evaluation.Internal.DunnIndex`1.#ctor(Aglomera.IDissimilarityMetric{`0})">
+            <summary>
+                Creates a new <see cref="T:Aglomera.Evaluation.Internal.DunnIndex`1" /> with given dissimilarity metric.
+            </summary>
+            <param name="dissimilarityMetric">The metric used to calculate dissimilarity between cluster elements.</param>
+        </member>
+        <member name="P:Aglomera.Evaluation.Internal.DunnIndex`1.DissimilarityMetric">
+            <inheritdoc />
+        </member>
+        <member name="M:Aglomera.Evaluation.Internal.DunnIndex`1.Evaluate(Aglomera.ClusterSet{`0})">
+            <inheritdoc />
+        </member>
+        <member name="T:Aglomera.Evaluation.Internal.IIndex`1">
+            <summary>
+                Implements the I-index internal evaluation method [1] that uses the ratio of the separation and compactness of a
+                given clustering partition scheme. To measure separation, it adopts the maximum distance between cluster centers
+                and for compactness, the distance from an to its cluster center.
+            </summary>
+            <remarks>
+                References:
+                [1] -
+                <see href="https://doi.org/10.1109/TPAMI.2002.1114856">
+                    Maulik, U., &amp; Bandyopadhyay, S. (2002). Performance evaluation of some clustering algorithms and validity
+                    indices. IEEE Transactions on Pattern Analysis and Machine Intelligence, 24(12), 1650-1654.
+                </see>
+            </remarks>
+            <typeparam name="TInstance">The type of instance considered.</typeparam>
+        </member>
+        <member name="M:Aglomera.Evaluation.Internal.IIndex`1.#ctor(Aglomera.IDissimilarityMetric{`0},Aglomera.CentroidFunction{`0})">
+            <summary>
+                Creates a new <see cref="T:Aglomera.Evaluation.Internal.IIndex`1" /> with given dissimilarity metric.
+            </summary>
+            <param name="dissimilarityMetric">The metric used to calculate dissimilarity between cluster elements.</param>
+            <param name="centroidFunc">
+                A function to get an element representing the centroid of a <see cref="T:Aglomera.Cluster`1" />.
+            </param>
+        </member>
+        <member name="P:Aglomera.Evaluation.Internal.IIndex`1.DissimilarityMetric">
+            <inheritdoc />
+        </member>
+        <member name="M:Aglomera.Evaluation.Internal.IIndex`1.Evaluate(Aglomera.ClusterSet{`0})">
+            <inheritdoc />
+        </member>
+        <member name="T:Aglomera.Evaluation.Internal.IInternalEvaluationCriterion`1">
+            <summary>
+                Represents an interface for criteria which uses the internal information resulting from a
+                <see cref="T:Aglomera.AgglomerativeClusteringAlgorithm`1" /> process to evaluate the goodness of a clustering structure without
+                reference to external information.
+                Implementations should be created so that when the criterion is <b>maximized</b> for a given
+                <see cref="T:Aglomera.ClusteringResult`1" />'s partition scheme, it provides the best
+                <see cref="T:Aglomera.ClusterSet`1" /> according to that criterion.
+            </summary>
+            <remarks>
+                These methods are useful for estimating the number of clusters to group data after executing the clustering
+                algorithm without any external data.
+            </remarks>
+            <typeparam name="TInstance">The type of instance considered.</typeparam>
+        </member>
+        <member name="P:Aglomera.Evaluation.Internal.IInternalEvaluationCriterion`1.DissimilarityMetric">
+            <summary>
+                Gets the metric used by this criterion to measure the dissimilarity / distance between cluster elements.
+            </summary>
+        </member>
+        <member name="M:Aglomera.Evaluation.Internal.IInternalEvaluationCriterion`1.Evaluate(Aglomera.ClusterSet{`0})">
+            <summary>
+                Evaluates the given <see cref="T:Aglomera.ClusterSet`1" /> partition according to this evaluation criterion.
+            </summary>
+            <param name="clusterSet">The clustering partition.</param>
+            <returns>The evaluation of the given partition according to this criterion.</returns>
+        </member>
+        <member name="T:Aglomera.Evaluation.Internal.ModifiedGammaStatistic`1">
+            <summary>
+                Implements an internal evaluation method based on a modified/improved version of Hubert's Gamma (Γ) statistic in
+                [1] with the transformation introduced in [2] in order to be maximized.
+            </summary>
+            <remarks>
+                Notes:
+                - "The improved Hubert Γ statistic describes the degree of a partition fitting the data set. [...] The partition
+                number fitting data set may be discovered from the plot of Γ versus n, however, it is difficult to find the
+                inflexion from the plot and it is possible that the partition number obtained is just close to the best solution,
+                but not that we want. So, it is not feasible in practice to determine the optimal partition by the plot of Γ versus
+                n directly. [...] In the plot of [transformed Γ] versus [number of clusters c], Γ goes to zero with c close to n,
+                and a max peak value that corresponds to a significant increase of c can be found. The number of clusters at which
+                the peak value occurs is equal to the number of clusters fitting the data." [2]
+                References:
+                [1] -
+                <see href="https://doi.org/10.1007/BF01908075">
+                    Hubert, L., &amp; Arabie, P. (1985). Comparing partitions. Journal of classification, 2(1), 193-218.
+                </see>
+                [2] -
+                <see href="https://doi.org/10.1109/ICICIC.2006.250">
+                    Zhao, H., Liang, J., &amp; Hu, H. (2006, August). Clustering Validity Based on the Improved Hubert\Gamma
+                    Statistic and the Separation of Clusters. In First International Conference on Innovative Computing,
+                    Information and Control, 2006. ICICIC'06.  (Vol. 2, pp. 539-543). IEEE.
+                </see>
+            </remarks>
+            <typeparam name="TInstance">The type of instance considered.</typeparam>
+        </member>
+        <member name="M:Aglomera.Evaluation.Internal.ModifiedGammaStatistic`1.#ctor(Aglomera.IDissimilarityMetric{`0},Aglomera.CentroidFunction{`0})">
+            <summary>
+                Creates a new <see cref="T:Aglomera.Evaluation.Internal.ModifiedGammaStatistic`1" /> with given dissimilarity metric.
+            </summary>
+            <param name="dissimilarityMetric">The metric used to calculate dissimilarity between cluster elements.</param>
+            <param name="centroidFunc">
+                A function to get an element representing the centroid of a <see cref="T:Aglomera.Cluster`1" />.
+            </param>
+        </member>
+        <member name="P:Aglomera.Evaluation.Internal.ModifiedGammaStatistic`1.DissimilarityMetric">
+            <inheritdoc />
+        </member>
+        <member name="M:Aglomera.Evaluation.Internal.ModifiedGammaStatistic`1.Evaluate(Aglomera.ClusterSet{`0})">
+            <inheritdoc />
+        </member>
+        <member name="T:Aglomera.Evaluation.Internal.RootMeanSquareStdDev`1">
+            <summary>
+                Implements an internal evaluation method measuring the root-mean-square standard deviation (RMSSD), i.e., the
+                square root of the variance between all elements. This criterion considers only the compactness of the clustering
+                partition.
+            </summary>
+            <remarks>
+                In order to select the optimal partition / <see cref="T:Aglomera.ClusterSet`1" /> using this criterion given
+                some <see cref="T:Aglomera.ClusteringResult`1" /> one has to find the 'knee' in the plot of the criterion value vs.
+                the number of clusters.
+            </remarks>
+            <typeparam name="TInstance">The type of instance considered.</typeparam>
+        </member>
+        <member name="M:Aglomera.Evaluation.Internal.RootMeanSquareStdDev`1.#ctor(Aglomera.IDissimilarityMetric{`0},Aglomera.CentroidFunction{`0})">
+            <summary>
+                Creates a new <see cref="T:Aglomera.Evaluation.Internal.RootMeanSquareStdDev`1" /> with given dissimilarity metric.
+            </summary>
+            <param name="dissimilarityMetric">The metric used to calculate dissimilarity between cluster elements.</param>
+            <param name="centroidFunc">
+                A function to get an element representing the centroid of a <see cref="T:Aglomera.Cluster`1" />.
+            </param>
+        </member>
+        <member name="P:Aglomera.Evaluation.Internal.RootMeanSquareStdDev`1.DissimilarityMetric">
+            <inheritdoc />
+        </member>
+        <member name="M:Aglomera.Evaluation.Internal.RootMeanSquareStdDev`1.Evaluate(Aglomera.ClusterSet{`0})">
+            <inheritdoc />
+        </member>
+        <member name="T:Aglomera.Evaluation.Internal.RSquared`1">
+            <summary>
+                Implements an internal evaluation method measuring the complement of the ratio of the sum of squared distances
+                between elements in different clusters to the total sum of squares. This criterion considers only the separation
+                between the clusters given some partition scheme (<see cref="T:Aglomera.ClusterSet`1" />).
+            </summary>
+            <remarks>
+                In order to select the optimal partition / <see cref="T:Aglomera.ClusterSet`1" /> using this criterion given
+                some <see cref="T:Aglomera.ClusteringResult`1" /> one has to find the 'knee' in the plot of the criterion value vs.
+                the number of clusters.
+            </remarks>
+            <typeparam name="TInstance">The type of instance considered.</typeparam>
+        </member>
+        <member name="M:Aglomera.Evaluation.Internal.RSquared`1.#ctor(Aglomera.IDissimilarityMetric{`0},Aglomera.CentroidFunction{`0})">
+            <summary>
+                Creates a new <see cref="T:Aglomera.Evaluation.Internal.RSquared`1" /> with given dissimilarity metric.
+            </summary>
+            <param name="dissimilarityMetric">The metric used to calculate dissimilarity between cluster elements.</param>
+            <param name="centroidFunc">
+                A function to get an element representing the centroid of a <see cref="T:Aglomera.Cluster`1" />.
+            </param>
+        </member>
+        <member name="P:Aglomera.Evaluation.Internal.RSquared`1.DissimilarityMetric">
+            <inheritdoc />
+        </member>
+        <member name="M:Aglomera.Evaluation.Internal.RSquared`1.Evaluate(Aglomera.ClusterSet{`0})">
+            <inheritdoc />
+        </member>
+        <member name="T:Aglomera.Evaluation.Internal.SilhouetteCoefficient`1">
+            <summary>
+                Implements an internal evaluation method that measures how similar an element is to its own cluster (cohesion)
+                compared to other clusters (separation). The silhouette ranges from −1 to +1, where a high value indicates that the
+                element is well matched to its own cluster and poorly matched to neighboring clusters. If most elements (average)
+                have a high value, then the clustering configuration is appropriate. If the average is a low or negative value,
+                then the clustering configuration may have too many or too few clusters.
+            </summary>
+            <remarks>
+                Assumptions in [2]:
+                - "Note that the construction [...] depends on the availability of other clusters apart from A, so we have to
+                assume [...] that the number of clusters k is more than one."
+                - "When cluster A contains only a single object it is unclear how u(i) should be defined, and then we simply set
+                s(i) equal to zero. This choice is of course arbitrary, but a value of zero appears to be most neutral."
+                Therefore, Silhouette coefficient punishes outliers and noise, so in the presence of such data we should avoid it.
+                References:
+                [1] - <see href="https://en.wikipedia.org/wiki/Silhouette_(clustering)" />
+                [2] -
+                <see href="https://doi.org/10.1016/0377-0427(87)90125-7">
+                    Rousseeuw, P. J. (1987). Silhouettes: a graphical aid to
+                    the interpretation and validation of cluster analysis. Journal of computational and applied mathematics, 20,
+                    53-65.
+                </see>
+            </remarks>
+            <typeparam name="TInstance">The type of instance considered.</typeparam>
+        </member>
+        <member name="M:Aglomera.Evaluation.Internal.SilhouetteCoefficient`1.#ctor(Aglomera.IDissimilarityMetric{`0})">
+            <summary>
+                Creates a new <see cref="T:Aglomera.Evaluation.Internal.SilhouetteCoefficient`1" /> with given dissimilarity metric.
+            </summary>
+            <param name="dissimilarityMetric">The metric used to calculate dissimilarity between cluster elements.</param>
+        </member>
+        <member name="P:Aglomera.Evaluation.Internal.SilhouetteCoefficient`1.DissimilarityMetric">
+            <inheritdoc />
+        </member>
+        <member name="M:Aglomera.Evaluation.Internal.SilhouetteCoefficient`1.EvaluateEach(Aglomera.ClusterSet{`0})">
+            <summary>
+                Calculates the silhouette coefficient for each element in the given <see cref="T:Aglomera.ClusterSet`1" />.
+            </summary>
+            <param name="clusterSet">The clustering partition.</param>
+            <returns>A dictionary containing the silhouette coefficient for each element in the given partition.</returns>
+        </member>
+        <member name="M:Aglomera.Evaluation.Internal.SilhouetteCoefficient`1.Evaluate(Aglomera.ClusterSet{`0})">
+            <inheritdoc />
+        </member>
+        <member name="T:Aglomera.Evaluation.Internal.WithinBetweenRatio`1">
+            <summary>
+                Implements the within-between ratio (WB) internal evaluation method in [1] measuring the ratio of the
+                sum-of-squares within cluster (SSW) and sum-of-squares between clusters(SSB).
+                The result is multiplied by the negative of the number of clusters so that maximizing the ratio in some
+                <see cref="T:Aglomera.ClusteringResult`1" /> provides the optimal partition, i.e., the optimal
+                <see cref="T:Aglomera.ClusterSet`1" />.
+            </summary>
+            <remarks>
+                Notes:
+                - In the original formulation in [1] the value was minimized, hence this implementation returns the negative WB
+                ratio.
+                References:
+                [1] -
+                <see href="https://doi.org/10.1007/978-3-642-04921-7_32">
+                    Zhao, Q., Xu, M., &amp; Fränti, P. (2009, April). Sum-of-Squares Based Cluster Validity Index and Significance
+                    Analysis. In ICANNGA (Vol. 5495, pp. 313-322).
+                </see>
+            </remarks>
+            <typeparam name="TInstance">The type of instance considered.</typeparam>
+        </member>
+        <member name="M:Aglomera.Evaluation.Internal.WithinBetweenRatio`1.#ctor(Aglomera.IDissimilarityMetric{`0},Aglomera.CentroidFunction{`0})">
+            <summary>
+                Creates a new <see cref="T:Aglomera.Evaluation.Internal.WithinBetweenRatio`1" /> with given dissimilarity metric.
+            </summary>
+            <param name="dissimilarityMetric">The metric used to calculate dissimilarity between cluster elements.</param>
+            <param name="centroidFunc">
+                A function to get an element representing the centroid of a <see cref="T:Aglomera.Cluster`1" />.
+            </param>
+        </member>
+        <member name="P:Aglomera.Evaluation.Internal.WithinBetweenRatio`1.DissimilarityMetric">
+            <inheritdoc />
+        </member>
+        <member name="M:Aglomera.Evaluation.Internal.WithinBetweenRatio`1.Evaluate(Aglomera.ClusterSet{`0})">
+            <inheritdoc />
+        </member>
+        <member name="T:Aglomera.Evaluation.Internal.XieBeniIndex`1">
+            <summary>
+                Implements the internal evaluation method in [1] known as the Xie-Beni (XB) index. It defines the inter-cluster
+                separation as the minimum square distance between cluster centers, and the intra-cluster compactness as the mean
+                square distance between each data object and its cluster center.
+            </summary>
+            <remarks>
+                Notes:
+                - The formulation in [1] has a form of (Compactness) / (Separation) and therefore reaches the optimum clustering by
+                being minimized. This implementation thus corresponds to - XB.
+                References:
+                [1] -
+                <see href="https://doi.org/10.1109/34.85677">
+                    Xie, X. L., &amp; Beni, G. (1991). A validity measure for fuzzy clustering. IEEE Transactions on pattern analysis
+                    and machine intelligence, 13(8), 841-847.
+                </see>
+            </remarks>
+            <typeparam name="TInstance">The type of instance considered.</typeparam>
+        </member>
+        <member name="M:Aglomera.Evaluation.Internal.XieBeniIndex`1.#ctor(Aglomera.IDissimilarityMetric{`0},Aglomera.CentroidFunction{`0})">
+            <summary>
+                Creates a new <see cref="T:Aglomera.Evaluation.Internal.XieBeniIndex`1" /> with given dissimilarity metric.
+            </summary>
+            <param name="dissimilarityMetric">The metric used to calculate dissimilarity between cluster elements.</param>
+            <param name="centroidFunc">
+                A function to get an element representing the centroid of a <see cref="T:Aglomera.Cluster`1" />.
+            </param>
+        </member>
+        <member name="P:Aglomera.Evaluation.Internal.XieBeniIndex`1.DissimilarityMetric">
+            <inheritdoc />
+        </member>
+        <member name="M:Aglomera.Evaluation.Internal.XieBeniIndex`1.Evaluate(Aglomera.ClusterSet{`0})">
+            <inheritdoc />
+        </member>
+        <member name="T:Aglomera.Evaluation.Internal.XuIndex`1">
+            <summary>
+                Implements the Xu-index internal evaluation method proposed in [1] measuring the compactness of clusters given some
+                partition scheme (<see cref="T:Aglomera.ClusterSet`1" />). The higher the negative value of the Xu-index, the better
+                the partition in some <see cref="T:Aglomera.ClusteringResult`1" /> is.
+            </summary>
+            <remarks>
+                Notes:
+                - In the original formulation in [1] the value was minimized, hence this implementation returns the negative
+                Xu-index ratio.
+                References:
+                [1] -
+                <see href="https://doi.org/10.1016/S0167-8655(97)00121-9">
+                    Xu, L. (1997). Bayesian Ying–Yang machine, clustering and number of clusters. Pattern Recognition Letters,
+                    18(11), 1167-1178.
+                </see>
+            </remarks>
+            <typeparam name="TInstance">The type of instance considered.</typeparam>
+        </member>
+        <member name="M:Aglomera.Evaluation.Internal.XuIndex`1.#ctor(Aglomera.IDissimilarityMetric{`0},Aglomera.CentroidFunction{`0})">
+            <summary>
+                Creates a new <see cref="T:Aglomera.Evaluation.Internal.XuIndex`1" /> with given dissimilarity metric.
+            </summary>
+            <param name="dissimilarityMetric">The metric used to calculate dissimilarity between cluster elements.</param>
+            <param name="centroidFunc">
+                A function to get an element representing the centroid of a <see cref="T:Aglomera.Cluster`1" />.
+            </param>
+        </member>
+        <member name="P:Aglomera.Evaluation.Internal.XuIndex`1.DissimilarityMetric">
+            <inheritdoc />
+        </member>
+        <member name="M:Aglomera.Evaluation.Internal.XuIndex`1.Evaluate(Aglomera.ClusterSet{`0})">
+            <inheritdoc />
+        </member>
+        <member name="T:Aglomera.Extensions">
+            <summary>
+                Contains several extension utility methods.
+            </summary>
+        </member>
+        <member name="M:Aglomera.Extensions.EvaluateClustering``1(Aglomera.ClusteringResult{``0},Aglomera.Evaluation.Internal.IInternalEvaluationCriterion{``0})">
+            <summary>
+                Evaluates all given <see cref="T:Aglomera.ClusterSet`1" />s according to the given
+                <see cref="T:Aglomera.Evaluation.Internal.IInternalEvaluationCriterion`1" />. The maximum number of clusters allowed in a cluster-set for
+                it to be evaluated corresponds to sqrt(N/2), where N is the total number of instances clustered.
+            </summary>
+            <param name="clustering">The cluster-sets to be evaluated.</param>
+            <param name="criterion">The criterion used to evaluate the cluster-sets.</param>
+            <returns>A list containing the evaluations for each cluster-set.</returns>
+            <typeparam name="TInstance">The type of instance considered.</typeparam>
+        </member>
+        <member name="M:Aglomera.Extensions.EvaluateClustering``1(Aglomera.ClusteringResult{``0},Aglomera.Evaluation.Internal.IInternalEvaluationCriterion{``0},System.UInt32)">
+            <summary>
+                Evaluates all given <see cref="T:Aglomera.ClusterSet`1" />s according to the given
+                <see cref="T:Aglomera.Evaluation.Internal.IInternalEvaluationCriterion`1" />.
+            </summary>
+            <param name="clustering">The cluster-sets to be evaluated.</param>
+            <param name="criterion">The criterion used to evaluate the cluster-sets.</param>
+            <param name="maxClusters">The maximum number of clusters allowed for a cluster-set for it to be evaluated.</param>
+            <returns>A list containing the evaluations for each cluster-set.</returns>
+            <typeparam name="TInstance">The type of instance considered.</typeparam>
+        </member>
+        <member name="M:Aglomera.Extensions.EvaluateClustering``2(Aglomera.ClusteringResult{``0},Aglomera.Evaluation.External.IExternalEvaluationCriterion{``0,``1},System.Collections.Generic.IDictionary{``0,``1})">
+            <summary>
+                Evaluates all given <see cref="T:Aglomera.ClusterSet`1" />s according to the given
+                <see cref="T:Aglomera.Evaluation.External.IExternalEvaluationCriterion`2" />. The maximum number of clusters allowed in a
+                cluster-set for it to be evaluated corresponds to sqrt(N/2), where N is the total number of instances clustered.
+            </summary>
+            <param name="clustering">The cluster-sets to be evaluated.</param>
+            <param name="criterion">The criterion used to evaluate the cluster-sets.</param>
+            <param name="instanceClasses">The instances' classes.</param>
+            <returns>A list containing the evaluations for each cluster-set.</returns>
+            <typeparam name="TInstance">The type of instance considered.</typeparam>
+            <typeparam name="TClass">The type of class considered.</typeparam>
+        </member>
+        <member name="M:Aglomera.Extensions.EvaluateClustering``2(Aglomera.ClusteringResult{``0},Aglomera.Evaluation.External.IExternalEvaluationCriterion{``0,``1},System.Collections.Generic.IDictionary{``0,``1},System.UInt32)">
+            <summary>
+                Evaluates all given <see cref="T:Aglomera.ClusterSet`1" />s according to the given
+                <see cref="T:Aglomera.Evaluation.External.IExternalEvaluationCriterion`2" />.
+            </summary>
+            <param name="clustering">The cluster-sets to be evaluated.</param>
+            <param name="criterion">The criterion used to evaluate the cluster-sets.</param>
+            <param name="instanceClasses">The instances' classes.</param>
+            <param name="maxClusters">The maximum number of clusters allowed for a cluster-set for it to be evaluated.</param>
+            <returns>A list containing the evaluations for each cluster-set.</returns>
+            <typeparam name="TInstance">The type of instance considered.</typeparam>
+            <typeparam name="TClass">The type of class considered.</typeparam>
+        </member>
+        <member name="M:Aglomera.Extensions.GetMedoid``1(Aglomera.Cluster{``0},Aglomera.IDissimilarityMetric{``0})">
+            <summary>
+                Returns the medoid of a given <see cref="T:Aglomera.Cluster`1" />, i.e., a representative object whose dissimilarity
+                to all the instances in the cluster is minimal.
+            </summary>
+            <remarks>
+                "Medoids are representative objects of a data set or a cluster with a data set whose average dissimilarity to all
+                the objects in the cluster is minimal. Medoids are similar in concept to means or centroids, but medoids are
+                always restricted to be members of the data set. Medoids are most commonly used on data when a mean or centroid
+                cannot be defined, such as graphs. They are also used in contexts where the centroid is not representative of the
+                dataset like in images and 3-D trajectories and gene expression (where while the data is sparse the medoid need
+                not be). These are also of interest while wanting to find a representative using some distance other than squared
+                euclidean distance (for instance in movie-ratings)."
+                <see href="https://en.wikipedia.org/wiki/Medoid" />
+            </remarks>
+            <param name="cluster">The cluster whose medoid we want to retrieve.</param>
+            <param name="metric">
+                The dissimilarity metric used to compare elements in the cluster, i.e., to calculate the distance between them.
+            </param>
+            <returns>The medoid of the given cluster. If the cluster has two elements, it returns the first element of the cluster.</returns>
+            <typeparam name="TInstance">The type of instance considered.</typeparam>
+        </member>
+        <member name="T:Aglomera.IClusteringAlgorithm`1">
+            <summary>
+                Represents an interface for hierarchical agglomerative clustering algorithms.
+            </summary>
+            <typeparam name="TInstance">The type of instance considered.</typeparam>
+        </member>
+        <member name="P:Aglomera.IClusteringAlgorithm`1.LinkageCriterion">
+            <summary>
+                Gets the <see cref="T:Aglomera.Linkage.ILinkageCriterion`1" /> used by this algorithm to create the clusters.
+            </summary>
+        </member>
+        <member name="M:Aglomera.IClusteringAlgorithm`1.GetClustering(System.Collections.Generic.ISet{`0})">
+            <summary>
+                Clusters the set of <typeparamref name="TInstance" /> given to the algorithm.
+            </summary>
+            <param name="instances">The instances to be clustered by the algorithm.</param>
+            <returns>
+                A <see cref="T:Aglomera.ClusteringResult`1" /> containing all the <see cref="T:Aglomera.ClusterSet`1" /> found in each
+                step of the algorithm and the corresponding the dissimilarity/distance at which they were found.
+            </returns>
+        </member>
+        <member name="M:Aglomera.IClusteringAlgorithm`1.GetClustering(System.Collections.Generic.IEnumerable{Aglomera.Cluster{`0}},System.Double)">
+            <summary>
+                Runs the clustering algorithm over the set of given <see cref="T:Aglomera.Cluster`1" />.
+            </summary>
+            <param name="clusters">The initial clusters provided to the algorithm.</param>
+            <param name="dissimilarity">The initial dissimilarity associated with the given clusters.</param>
+            <returns>
+                A <see cref="T:Aglomera.ClusteringResult`1" /> containing all the <see cref="T:Aglomera.ClusterSet`1" /> found in each
+                step of the algorithm and the corresponding the dissimilarity/distance at which they were found.
+            </returns>
+        </member>
+        <member name="M:Aglomera.IClusteringAlgorithm`1.GetClustering(Aglomera.ClusterSet{`0})">
+            <summary>
+                Runs the clustering algorithm over the given <see cref="T:Aglomera.ClusterSet`1" />.
+            </summary>
+            <param name="clusterSet">The initial clusters and dissimilarity provided to the algorithm.</param>
+            <returns>
+                A <see cref="T:Aglomera.ClusteringResult`1" /> containing all the <see cref="T:Aglomera.ClusterSet`1" /> found in each
+                step of the algorithm and the corresponding the dissimilarity/distance at which they were found.
+            </returns>
+        </member>
+        <member name="T:Aglomera.IDissimilarityMetric`1">
+            <summary>
+                Represents an interface for metrics measuring the dissimilarity/distance between instances.
+            </summary>
+            <typeparam name="TInstance">The type of instance considered.</typeparam>
+        </member>
+        <member name="M:Aglomera.IDissimilarityMetric`1.Calculate(`0,`0)">
+            <summary>
+                Calculates the distance between two instances according to this metric.
+            </summary>
+            <param name="instance1">The first instance.</param>
+            <param name="instance2">The second instance.</param>
+            <returns>A value representing the distance between two instances according to this metric.</returns>
+        </member>
+        <member name="T:Aglomera.Linkage.AverageLinkage`1">
+            <summary>
+                Implements the unweighted pair-group average method or UPGMA, i.e., returns the mean distance between the elements
+                in each cluster.
+            </summary>
+            <remarks>
+                Average linkage tries to strike a balance between <see cref="T:Aglomera.Linkage.SingleLinkage`1" /> and
+                <see cref="T:Aglomera.Linkage.CompleteLinkage`1" />. It uses average pairwise dissimilarity, so clusters tend to be
+                relatively compact and relatively far apart. However, it is not clear what properties the resulting clusters have
+                when we cut an average linkage tree at given distance. Single and complete linkage trees each had simple
+                interpretations [1].
+                References:
+                [1] - <see href="http://www.stat.cmu.edu/~ryantibs/datamining/lectures/05-clus2-marked.pdf" />.
+            </remarks>
+            <typeparam name="TInstance">The type of instance considered.</typeparam>
+        </member>
+        <member name="M:Aglomera.Linkage.AverageLinkage`1.#ctor(Aglomera.IDissimilarityMetric{`0})">
+            <summary>
+                Creates a new <see cref="T:Aglomera.Linkage.AverageLinkage`1" /> with given dissimilarity metric.
+            </summary>
+            <param name="metric">The metric used to calculate dissimilarity between cluster elements.</param>
+        </member>
+        <member name="P:Aglomera.Linkage.AverageLinkage`1.DissimilarityMetric">
+            <inheritdoc />
+        </member>
+        <member name="M:Aglomera.Linkage.AverageLinkage`1.Calculate(Aglomera.Cluster{`0},Aglomera.Cluster{`0})">
+            <inheritdoc />
+        </member>
+        <member name="T:Aglomera.Linkage.CentroidLinkage`1">
+            <summary>
+                Implements the centroid linkage clustering method, i.e., returns the distance between the centroid for each cluster
+                (a mean vector).
+            </summary>
+            <remarks>
+                Centroid linkage is equivalent to <see cref="T:Aglomera.Linkage.AverageLinkage`1" /> of all pairs of documents from
+                different clusters. Thus, the difference between average and centroid clustering is that the former considers all
+                pairs of documents in computing average pairwise similarity, whereas centroid clustering excludes pairs from the
+                same cluster [1].
+                References:
+                [1] - <see href="https://nlp.stanford.edu/IR-book/html/htmledition/centroid-clustering-1.html" />.
+            </remarks>
+            <typeparam name="TInstance">The type of instance considered.</typeparam>
+        </member>
+        <member name="M:Aglomera.Linkage.CentroidLinkage`1.#ctor(Aglomera.IDissimilarityMetric{`0},System.Func{Aglomera.Cluster{`0},`0})">
+            <summary>
+                Creates a new <see cref="T:Aglomera.Linkage.CentroidLinkage`1" /> with given dissimilarity metric and centroid
+                function.
+            </summary>
+            <param name="metric">The metric used to calculate dissimilarity between cluster elements.</param>
+            <param name="centroidFunc">
+                A function to get an element representing the centroid of a <see cref="T:Aglomera.Cluster`1" />.
+            </param>
+        </member>
+        <member name="P:Aglomera.Linkage.CentroidLinkage`1.DissimilarityMetric">
+            <inheritdoc />
+        </member>
+        <member name="M:Aglomera.Linkage.CentroidLinkage`1.Calculate(Aglomera.Cluster{`0},Aglomera.Cluster{`0})">
+            <inheritdoc />
+        </member>
+        <member name="T:Aglomera.Linkage.CompleteLinkage`1">
+            <summary>
+                Implements the maximum or complete-linkage clustering method, i.e., returning the maximum value of all pairwise
+                distances between the elements in each cluster. The method is also known as farthest neighbor clustering.
+            </summary>
+            <remarks>
+                Complete linkage clustering avoids a drawback of <see cref="T:Aglomera.Linkage.SingleLinkage`1" /> - the
+                so-called chaining phenomenon, where clusters formed via single linkage clustering may be forced together due to
+                single elements being close to each other, even though many of the elements in each cluster may be very distant to
+                each other. Complete linkage tends to find compact clusters of approximately equal diameter (
+                <see href="https://en.wikipedia.org/wiki/Complete-linkage_clustering" />).
+                However, complete-link clustering suffers from a different problem. It pays too much attention to outliers, points
+                that do not fit well into the global structure of the cluster (
+                <see href="https://nlp.stanford.edu/IR-book/html/htmledition/single-link-and-complete-link-clustering-1.html" />).
+            </remarks>
+            <typeparam name="TInstance">The type of instance considered.</typeparam>
+        </member>
+        <member name="M:Aglomera.Linkage.CompleteLinkage`1.#ctor(Aglomera.IDissimilarityMetric{`0})">
+            <summary>
+                Creates a new <see cref="T:Aglomera.Linkage.CompleteLinkage`1" /> with given dissimilarity metric.
+            </summary>
+            <param name="metric">The metric used to calculate dissimilarity between cluster elements.</param>
+        </member>
+        <member name="P:Aglomera.Linkage.CompleteLinkage`1.DissimilarityMetric">
+            <inheritdoc />
+        </member>
+        <member name="M:Aglomera.Linkage.CompleteLinkage`1.Calculate(Aglomera.Cluster{`0},Aglomera.Cluster{`0})">
+            <inheritdoc />
+        </member>
+        <member name="T:Aglomera.Linkage.ILinkageCriterion`1">
+            <summary>
+                An interface for agglomeration (linkage) methods for computing distance between clusters to be used during
+                agglomerative clustering.
+            </summary>
+            <typeparam name="TInstance">The type of instance considered.</typeparam>
+        </member>
+        <member name="P:Aglomera.Linkage.ILinkageCriterion`1.DissimilarityMetric">
+            <summary>
+                Gets the metric used to measure the dissimilarity / distance between cluster elements according to this linkage
+                criterion.
+            </summary>
+        </member>
+        <member name="M:Aglomera.Linkage.ILinkageCriterion`1.Calculate(Aglomera.Cluster{`0},Aglomera.Cluster{`0})">
+            <summary>
+                Calculates the distance / dissimilarity between the two given clusters according to this linkage criterion.
+            </summary>
+            <param name="cluster1">The first cluster.</param>
+            <param name="cluster2">The second cluster.</param>
+            <returns>
+                A value corresponding to the distance / dissimilarity between <paramref name="cluster1" /> and
+                <paramref name="cluster2" />, according to this linkage criterion.
+            </returns>
+        </member>
+        <member name="T:Aglomera.Linkage.MinimumEnergyLinkage`1">
+            <summary>
+                Implements the minimum (energy) E-distance method that minimizes a joint between-within measure of distance between
+                clusters.
+            </summary>
+            <remarks>
+                "This method extends <see cref="T:Aglomera.Linkage.WardsMinimumVarianceLinkage`1" />, by defining a cluster distance and
+                objective function in terms of Euclidean distance, or any power of Euclidean distance in the interval (0, 2].
+                Ward's method is obtained as the special case when the power is 2. The ability of the proposed extension to
+                identify clusters with nearly equal centers is an important advantage over geometric or cluster center methods"
+                [1].
+                References:
+                [1] -
+                <see href="https://link.springer.com/article/10.1007/s00357-005-0012-9">
+                    Szekely, G. J., &amp; Rizzo, M. L. (2005). Hierarchical clustering via joint between-within distances:
+                    Extending Ward's minimum variance method. Journal of classification, 22(2), 151-183
+                </see>
+            </remarks>
+            <typeparam name="TInstance">The type of instance considered.</typeparam>
+        </member>
+        <member name="M:Aglomera.Linkage.MinimumEnergyLinkage`1.#ctor(Aglomera.IDissimilarityMetric{`0})">
+            <summary>
+                Creates a new <see cref="T:Aglomera.Linkage.MinimumEnergyLinkage`1" /> with given dissimilarity metric.
+            </summary>
+            <param name="metric">The metric used to calculate dissimilarity between cluster elements.</param>
+        </member>
+        <member name="P:Aglomera.Linkage.MinimumEnergyLinkage`1.DistanceExponent">
+            <summary>
+                Gets or sets the distance exponent in the interval (0, 2].
+            </summary>
+        </member>
+        <member name="P:Aglomera.Linkage.MinimumEnergyLinkage`1.DissimilarityMetric">
+            <inheritdoc />
+        </member>
+        <member name="M:Aglomera.Linkage.MinimumEnergyLinkage`1.Calculate(Aglomera.Cluster{`0},Aglomera.Cluster{`0})">
+            <inheritdoc />
+        </member>
+        <member name="T:Aglomera.Linkage.SingleLinkage`1">
+            <summary>
+                Implements the minimum or single-linkage clustering method, i.e., returns the minimum value of all pairwise
+                distances between the elements in each cluster. The method is also known as nearest neighbor clustering.
+            </summary>
+            <remarks>
+                A drawback of this method is that it tends to produce long thin clusters in which nearby elements of the same
+                cluster have small distances, but elements at opposite ends of a cluster may be much farther from each other than
+                two elements of other clusters [1].
+                Since the merge criterion is strictly local, a chain of points can be extended for long distances without regard to
+                the overall shape of the emerging cluster. This effect is called chaining [2].
+                References:
+                [1] - <see href="https://en.wikipedia.org/wiki/Single-linkage_clustering" />.
+                [2] -
+                <see href="https://nlp.stanford.edu/IR-book/html/htmledition/single-link-and-complete-link-clustering-1.html" />
+            </remarks>
+            <typeparam name="TInstance">The type of instance considered.</typeparam>
+        </member>
+        <member name="M:Aglomera.Linkage.SingleLinkage`1.#ctor(Aglomera.IDissimilarityMetric{`0})">
+            <summary>
+                Creates a new <see cref="T:Aglomera.Linkage.SingleLinkage`1" /> with given dissimilarity metric.
+            </summary>
+            <param name="metric">The metric used to calculate dissimilarity between cluster elements.</param>
+        </member>
+        <member name="P:Aglomera.Linkage.SingleLinkage`1.DissimilarityMetric">
+            <inheritdoc />
+        </member>
+        <member name="M:Aglomera.Linkage.SingleLinkage`1.Calculate(Aglomera.Cluster{`0},Aglomera.Cluster{`0})">
+            <inheritdoc />
+        </member>
+        <member name="T:Aglomera.Linkage.WardsMinimumVarianceLinkage`1">
+            <summary>
+                Implements Ward's minimum variance method, i.e., returns the total within-cluster variance, corresponding to a
+                weighted squared distance between cluster centers.
+            </summary>
+            <remarks>
+                "With hierarchical clustering, the sum of squares starts out at zero (because every point is in its own cluster)
+                and then grows as we merge clusters. Ward's method keeps this growth as small as possible. This is nice if you
+                believe that the sum of squares should be small. Notice that the number of points shows up in [the formula], as
+                well as their geometric separation. Given two pairs of clusters whose centers are equally far apart, Ward's method
+                will prefer to merge the smaller ones." [1]
+                References:
+                [1] - <see href="http://www.stat.cmu.edu/~cshalizi/350/lectures/08/lecture-08.pdf" />.
+            </remarks>
+            <typeparam name="TInstance">The type of instance considered.</typeparam>
+        </member>
+        <member name="M:Aglomera.Linkage.WardsMinimumVarianceLinkage`1.#ctor(Aglomera.IDissimilarityMetric{`0},Aglomera.CentroidFunction{`0})">
+            <summary>
+                Creates a new <see cref="T:Aglomera.Linkage.WardsMinimumVarianceLinkage`1" /> with given dissimilarity metric and centroid
+                function.
+            </summary>
+            <param name="metric">The metric used to calculate dissimilarity between cluster elements.</param>
+            <param name="centroidFunc">
+                A function to get an element representing the centroid of a <see cref="T:Aglomera.Cluster`1" />.
+            </param>
+        </member>
+        <member name="P:Aglomera.Linkage.WardsMinimumVarianceLinkage`1.DissimilarityMetric">
+            <inheritdoc />
+        </member>
+        <member name="M:Aglomera.Linkage.WardsMinimumVarianceLinkage`1.Calculate(Aglomera.Cluster{`0},Aglomera.Cluster{`0})">
+            <inheritdoc />
+        </member>
+    </members>
+</doc>
