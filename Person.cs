@@ -55,7 +55,7 @@ namespace classical_genetic
             return (means, stds);
         }
 
-        public double[] similarity_score(double[] sample)
+        public double similarity_score(double[] sample)
         {
             //calculates similarity score of sample's features, score is added if difference between features and means of features is smaller than standard deviation of a feature
             //double[][] arrays = fullSignatures.Select(a => a.ToArray()).ToArray();
@@ -82,7 +82,7 @@ namespace classical_genetic
                 else { diffs[i] = 1; }
                 
             }
-            return diffs;
+            return diffs.Sum();
         }
 
     }

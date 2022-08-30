@@ -37,7 +37,7 @@ namespace classical_genetic
             return activatedFeatures;
         }
 
-        double[] dissimilarity_score(double[] sample, int ind)
+        double dissimilarity_score(double[] sample, int ind)
         {
             //this.meansStds();
             double[] scores = new double[sample.Length];
@@ -60,7 +60,7 @@ namespace classical_genetic
                 scores[n] = score;
 
             }
-            return scores;
+            return scores.Sum();
         }
 
         public void meansStds()
@@ -86,34 +86,27 @@ namespace classical_genetic
                     ones += 1;
                 }
             }
-            for (int n=0;n<Persons.GetLength(0);n++)
-            {
-                double[] similarity_score_accu = new double[currActivations.Length];
-                double[] dissimilarity_score_accu = new double[currActivations.Length];
-                for (int k = 0; k < Persons[n].currFeatures.Length; k++)
+            int n = 3;
+            double similarity_score_accu = 0;
+            double dissimilarity_score_accu = 0;
+                for (int k = 0; k < Persons[n].currFeatures.GetLength(0); k++)
                 {
                     
-                    double[] similarity_score = Persons[n].similarity_score(Persons[n].currFeatures[k]);
-                    double[] dissimilarity_score = this.dissimilarity_score(Persons[n].currFeatures[k], n);
+                    double similarity_score = Persons[n].similarity_score(Persons[n].currFeatures[k]);
+                    double dissimilarity_score = this.dissimilarity_score(Persons[n].currFeatures[k], n);
+                similarity_score_accu += similarity_score;
+                dissimilarity_score_accu += dissimilarity_score;
 
 
-
-                    for (int i = 0; i < currActivations.Length; i++)
-                    {
-                        similarity_score_accu[i] += similarity_score[i];
-                        dissimilarity_score_accu[i] += dissimilarity_score[i];
-                        totalFitness[i] += similarity_score[i];
-                        totaldissimilarity[i] += dissimilarity_score[i];
-                    }
+                
                 }
                 
-            }
-            this.totalDissimilarity = totaldissimilarity;
-            this.totalSimilarity = totalFitness;
+            
+            if (ones == 0) { ones = 1; }
             //return ((this.totalDissimilarity.Sum() - 10 * (this.totalSimilarity.Sum())))
-            //return (this.totalDissimilarity.Sum() - this.totalSimilarity.Sum() - 1000*ones);
+            return ((10/ones)*(dissimilarity_score_accu - similarity_score_accu));
             //if (ones == 8) { ones = 1; }
-            return ((16-ones)*(this.totalDissimilarity.Sum() - this.totalSimilarity.Sum()));
+            //return ((16-ones)*(this.totalDissimilarity.Sum() - this.totalSimilarity.Sum()));
         }
 
     }
