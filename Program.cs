@@ -20,7 +20,7 @@ namespace classical_genetic
         private Random random;
         void Start()
         {
-            int populationSize = 50;
+            int populationSize = 30;
             float mutationRate = 0.1f;
             double[][] features = new double[][]
             {
@@ -37,12 +37,13 @@ namespace classical_genetic
         }
         void Update()
         {
-            int epochs = 20;
+            int epochs = 50;
             for (int e = 0; e < epochs; e++)
             {
                 ga.NewGeneration();
                 ga.CalculateFitness();
                 Console.WriteLine("Best result " + ga.BestFitness);
+                Console.WriteLine("Mean fitness " + ga.fitnessMean);
                 ga.BestGenes.ToList().ForEach(element => Console.Write($",{element}"));
                 Console.WriteLine("\n");
             }

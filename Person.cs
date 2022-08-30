@@ -79,7 +79,7 @@ namespace classical_genetic
                 {
                     diffs[i] = 0;
                 }
-                else { diffs[i] = diff; }
+                else { diffs[i] = 1; }
                 
             }
             return diffs;

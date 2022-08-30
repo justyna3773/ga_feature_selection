@@ -12,6 +12,7 @@ namespace classical_genetic
         public int Generation { get; private set; }
         public int Elitism;
         public double[][] Features;
+        public double fitnessMean;
         public double BestFitness { get; private set; }
         private List<DNA<T>> newPopulation;
         public T[] BestGenes { get; private set; }
@@ -100,6 +101,7 @@ namespace classical_genetic
                 }
             }
             BestFitness = best.Fitness;
+            fitnessMean = fitnessSum / Population.Count;
             best.Genes.CopyTo(BestGenes, 0);
         }
 

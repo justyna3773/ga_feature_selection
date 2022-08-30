@@ -39,20 +39,20 @@ namespace classical_genetic
 
         double[] dissimilarity_score(double[] sample, int ind)
         {
-            this.meansStds();
+            //this.meansStds();
             double[] scores = new double[sample.Length];
             for (int n = 0; n < sample.Length; n++)
             {
 
                 double score = 0;
-                for (int i = 0; i < Persons.Length; i++)
+                for (int i = 0; i < Persons.GetLength(0); i++)
                 {
                     if (ind != n)
                     {
                         double diff = Math.Abs(sample[n] - this.meansFeatures[i][n]);
                         if (diff > this.stdsFeatures[i][n])
                         {
-                            score += diff;
+                            score += 1;
                         }
                         else { score += 0; }
                     }
@@ -86,12 +86,13 @@ namespace classical_genetic
                     ones += 1;
                 }
             }
-            for (int n=0;n<Persons.Length;n++)
+            for (int n=0;n<Persons.GetLength(0);n++)
             {
                 double[] similarity_score_accu = new double[currActivations.Length];
                 double[] dissimilarity_score_accu = new double[currActivations.Length];
                 for (int k = 0; k < Persons[n].currFeatures.Length; k++)
                 {
+                    
                     double[] similarity_score = Persons[n].similarity_score(Persons[n].currFeatures[k]);
                     double[] dissimilarity_score = this.dissimilarity_score(Persons[n].currFeatures[k], n);
 
@@ -110,7 +111,9 @@ namespace classical_genetic
             this.totalDissimilarity = totaldissimilarity;
             this.totalSimilarity = totalFitness;
             //return ((this.totalDissimilarity.Sum() - 10 * (this.totalSimilarity.Sum())))
-            return (this.totalDissimilarity.Sum() - 8*this.totalSimilarity.Sum() - 20000*ones);
+            //return (this.totalDissimilarity.Sum() - this.totalSimilarity.Sum() - 1000*ones);
+            //if (ones == 8) { ones = 1; }
+            return ((16-ones)*(this.totalDissimilarity.Sum() - this.totalSimilarity.Sum()));
         }
 
     }
