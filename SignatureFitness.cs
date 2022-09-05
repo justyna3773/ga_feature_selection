@@ -39,6 +39,7 @@ namespace classical_genetic
                 data[i - 3] = pers.currFeatures;
             }
             //this.DataToTraining();
+            //ten zestaw daje 254.
             this.currActivations = activations;
             dataset.activate(activations);
             this.trainingData = dataset.activatedTraining;
@@ -252,7 +253,7 @@ namespace classical_genetic
             //Console.WriteLine("Accuracy " + sum_correct / total_pred);
             double recall = (double)sum_correct_ones / (double)testing_ones;
             double accuracy = (double)sum_correct / (double)total_pred;
-            return 100*(recall + accuracy) - 100;
+            return (recall + accuracy);
         }
 
     }

@@ -42,10 +42,33 @@ namespace classical_genetic
         public DNA<T> Crossover(DNA<T> otherParent)
         {
             DNA<T> child = new DNA<T>(Genes.Length, random, getRandomGene, fitnessFunction, features, shouldInitGenes: false);
-            for (int i = 0; i<Genes.Length; i++)
+            double crossoverProb = 0.75;
+            double tempProb = random.NextDouble();
+            if (tempProb < crossoverProb)
+            {
+                int crosspoint = random.Next(0, Genes.Length - 1);
+                for (int i = 0; i < Genes.Length; i++)
+                {
+                    if (i < crosspoint)
+                    {
+                        child.Genes[i] = Genes[i];
+                    }
+                    else { child.Genes[i] = otherParent.Genes[i]; }
+                }
+            }
+            else
+            {
+                if(Fitness > otherParent.Fitness)
+                {
+                    child.Genes = Genes;
+                }
+                else { child.Genes = otherParent.Genes; }
+            }
+
+            /*for (int i = 0; i<Genes.Length; i++)
             {
                 child.Genes[i] = random.NextDouble() < 0.5 ? Genes[i] : otherParent.Genes[i];
-            }
+            }*/
             return child;
         }
 

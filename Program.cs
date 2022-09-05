@@ -19,6 +19,8 @@ namespace classical_genetic
         private GeneticAlgorithm<double> ga;
         private Random random;
         private Dataset data;
+        private Dataset data1;
+        private Dataset data2;
         
     void Start()
         {
@@ -35,6 +37,8 @@ namespace classical_genetic
                 persons[l - 3] = pers;
             }
             data = new Dataset(random, ind, persons);
+            data1 = new Dataset(random, ind, persons);
+            data2 = new Dataset(random, ind, persons);
             double[][] features = new double[][]
             {
             new double[] { 1,0,0,1,1},
@@ -55,10 +59,13 @@ namespace classical_genetic
             {
                 ga.NewGeneration();
                 ga.CalculateFitness();
-                Console.WriteLine("Best result " + ga.BestFitness);
-                Console.WriteLine("Fitness sum" + ga.fitnessSum);
+                Console.WriteLine("\"" + e + "\": {");
+                Console.WriteLine("\"best\": " + ga.BestFitness +",");
+                Console.WriteLine("\"sum\": " + ga.fitnessSum +",");
+                Console.Write("\"activ\": [");
                 ga.BestGenes.ToList().ForEach(element => Console.Write($",{element}"));
-                Console.WriteLine("\n");
+                Console.Write("] }, ");
+                
             }
         }
         private double getRandomBit()
@@ -131,13 +138,19 @@ namespace classical_genetic
             }
             return score;*/
             double score = 0;
+            double score1 = 0;
+            double score2 = 0;
             DNA<double> dna = ga.Population[i];
             int[] activations = dna.Genes.Select(x => (int)x).ToArray();
             
             SignatureFitness sig_fit = new SignatureFitness(random, activations, data);
+            SignatureFitness sig_fit1 = new SignatureFitness(random, activations, data1);
+            SignatureFitness sig_fit2 = new SignatureFitness(random, activations, data2);
             //List<double[][]> activated = sig_fit.activate_features(activations);
             score = sig_fit.totalFitness();
-            return score;
+            score1 = sig_fit1.totalFitness();
+            score2 = sig_fit2.totalFitness();
+            return (score+score1+score2)*10;
 
         }
 
