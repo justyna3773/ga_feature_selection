@@ -17,7 +17,7 @@ namespace classical_genetic
         public T[] BestGenes { get; private set; }
         public float MutationRate;
         private Random random;
-        private double fitnessSum;
+        public double fitnessSum;
         private int dnaSize;
         private double[] fitnesses;
         private Func<T> getRandomGene;
@@ -126,8 +126,8 @@ namespace classical_genetic
             int n = vals.Length;
 
             double sum = 0.0;
-            for (int i = 0; i< n; ++i)
-              sum += vals[i];
+            for (int i = 0; i < n; ++i)
+            { sum += vals[i]; }
 
             double accum = 0.0;
             double p = rnd.NextDouble();
@@ -137,6 +137,7 @@ namespace classical_genetic
                 if (p<accum) return i;
             }
             return n - 1;  // last index
+
         }
     }
 }

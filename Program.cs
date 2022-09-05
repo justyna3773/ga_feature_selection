@@ -18,10 +18,23 @@ namespace classical_genetic
     {
         private GeneticAlgorithm<double> ga;
         private Random random;
-        void Start()
+        private Dataset data;
+        
+    void Start()
         {
-            int populationSize = 50;
+            int populationSize = 10;
             float mutationRate = 0.1f;
+
+            int ind = 3;
+            random = new System.Random();
+            Person[] persons = new Person[27];
+            for (int l = 3; l < 30; l++)
+            {
+                string pathName = @"C:\pobrane\deskryptory\22\descriptors_user_" + l + ".csv";
+                Person pers = new Person(pathName);
+                persons[l - 3] = pers;
+            }
+            data = new Dataset(random, ind, persons);
             double[][] features = new double[][]
             {
             new double[] { 1,0,0,1,1},
@@ -30,19 +43,20 @@ namespace classical_genetic
             new double[] { 0,1,1,0,0},
             new double[] { 0,0,0,0,0},
             };
-            random = new System.Random();
+            
             ga = new GeneticAlgorithm<double>(populationSize, 16, random, getRandomBit, FitnessFunction, features, 16, mutationRate);
             ga.CalculateFitness();
 
         }
         void Update()
         {
-            int epochs = 20;
+            int epochs = 50;
             for (int e = 0; e < epochs; e++)
             {
                 ga.NewGeneration();
                 ga.CalculateFitness();
                 Console.WriteLine("Best result " + ga.BestFitness);
+                Console.WriteLine("Fitness sum" + ga.fitnessSum);
                 ga.BestGenes.ToList().ForEach(element => Console.Write($",{element}"));
                 Console.WriteLine("\n");
             }
@@ -119,8 +133,9 @@ namespace classical_genetic
             double score = 0;
             DNA<double> dna = ga.Population[i];
             int[] activations = dna.Genes.Select(x => (int)x).ToArray();
-            SignatureFitness sig_fit = new SignatureFitness();
-            List<double[][]> activated = sig_fit.activate_features(activations);
+            
+            SignatureFitness sig_fit = new SignatureFitness(random, activations, data);
+            //List<double[][]> activated = sig_fit.activate_features(activations);
             score = sig_fit.totalFitness();
             return score;
 
