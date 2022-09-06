@@ -22,17 +22,17 @@ namespace classical_genetic
         public int[] currActivations { get; private set; }
         public double[] totalSimilarity { get; private set; }
         public double[] totalDissimilarity { get; private set; }
-
-        public SignatureFitness(Random rand,int[] activations, Dataset dataset)
+        public string pathN { get; private set; }
+        public SignatureFitness(Random rand,int[] activations, Dataset dataset, string pathNa, int ind)
         {
             Persons = new Person[27];
             data = new double[27][][];
             activatedFeatures = new List<double[][]>();
             random = rand;
-            index = 3;
+            index = ind;
             for(int i=3; i<30; i++)
             {
-                string pathName = @"C:\pobrane\deskryptory\22\descriptors_user_" + i + ".csv";
+                string pathName = pathNa + i + ".csv";
                 Person pers = new Person(pathName);
                 Persons[i - 3] = pers;
                 activatedFeatures.Add(pers.choose_features(activations));
@@ -235,6 +235,11 @@ namespace classical_genetic
 
             //double[][] trainData;
             //this.DataToTraining();
+            int ones = 0;
+            foreach (int x in currActivations)
+            {
+                if (x == 1) { ones += 1; }
+            }
             int sum_correct = 0;
             int total_pred = this.testingData.GetLength(0);
             int numFeatures = 16;//może trzeba zrestrukturyzować kod

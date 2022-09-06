@@ -21,24 +21,37 @@ namespace classical_genetic
         private Dataset data;
         private Dataset data1;
         private Dataset data2;
-        
+        private Dataset testing;
+        private int[][] bestActivations;
+        private double[] bestFitnesses;
+        private int ind = 1;
+        private string pathNa = @"C:\pobrane\deskryptory\22\descriptors_user_";
     void Start()
         {
-            int populationSize = 10;
+            int populationSize = 50;
             float mutationRate = 0.1f;
 
-            int ind = 3;
+            //int ind = 3;
             random = new System.Random();
             Person[] persons = new Person[27];
             for (int l = 3; l < 30; l++)
             {
-                string pathName = @"C:\pobrane\deskryptory\22\descriptors_user_" + l + ".csv";
+                string pathName = pathNa + l + ".csv";
                 Person pers = new Person(pathName);
                 persons[l - 3] = pers;
             }
             data = new Dataset(random, ind, persons);
+            while (data.testing_ones < 8)
+            {
+                data = new Dataset(random, ind, persons);
+            }
             data1 = new Dataset(random, ind, persons);
             data2 = new Dataset(random, ind, persons);
+            testing = new Dataset(random, ind, persons);
+            while (testing.testing_ones < 8)
+            {
+                testing = new Dataset(random, ind, persons);
+            }
             double[][] features = new double[][]
             {
             new double[] { 1,0,0,1,1},
@@ -54,18 +67,53 @@ namespace classical_genetic
         }
         void Update()
         {
-            int epochs = 50;
+            int epochs = 20;
+            bestActivations = new int[epochs+2][];
+            bestFitnesses = new double[epochs+2];
             for (int e = 0; e < epochs; e++)
             {
                 ga.NewGeneration();
                 ga.CalculateFitness();
                 Console.WriteLine("\"" + e + "\": {");
+                bestFitnesses[e] = ga.BestFitness;
                 Console.WriteLine("\"best\": " + ga.BestFitness +",");
                 Console.WriteLine("\"sum\": " + ga.fitnessSum +",");
                 Console.Write("\"activ\": [");
+                bestActivations[e] = ga.BestGenes.Select(x => (int)x).ToArray();
                 ga.BestGenes.ToList().ForEach(element => Console.Write($",{element}"));
                 Console.Write("] }, ");
                 
+            }
+            bestActivations[epochs] = new int[] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
+            bestFitnesses[epochs] = 2.0;
+            bestActivations[epochs + 1] = new int[] { 0, 0, 1, 1, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1 };
+            bestFitnesses[epochs + 1] = 2.0;
+        }
+        void Test()
+        {
+            for (int c=0;c<bestActivations.GetLength(0);c++)
+            {
+                int correct_ones = 0;
+                int all_correct = 0;
+                int numClasses = 2;
+                double recall = 0;
+                double accu = 0;
+                int k = 9;
+                testing.activate(bestActivations[c]);
+                int total_pred = testing.activatedTesting.GetLength(0);
+                foreach (double[] samp in testing.activatedTesting)
+                {
+                    int predicted = KNNProgram.Classify(samp, testing.activatedTraining,
+                      numClasses, k);
+                    if (predicted == samp.Last())
+                    {
+                        if (predicted == 1) { correct_ones += 1; }
+                        all_correct += 1;
+                    }
+                }
+                recall = (double)correct_ones / (double)testing.testing_ones;
+                accu = (double)all_correct / (double)total_pred;
+                Console.WriteLine("Fitness: " + bestFitnesses[c] + ", recall: " + recall + ", accu: " + accu + ", total: " + (accu + recall));
             }
         }
         private double getRandomBit()
@@ -143,71 +191,32 @@ namespace classical_genetic
             DNA<double> dna = ga.Population[i];
             int[] activations = dna.Genes.Select(x => (int)x).ToArray();
             
-            SignatureFitness sig_fit = new SignatureFitness(random, activations, data);
-            SignatureFitness sig_fit1 = new SignatureFitness(random, activations, data1);
-            SignatureFitness sig_fit2 = new SignatureFitness(random, activations, data2);
+            SignatureFitness sig_fit = new SignatureFitness(random, activations, data, pathNa, ind);
+            //SignatureFitness sig_fit1 = new SignatureFitness(random, activations, data1);
+            //SignatureFitness sig_fit2 = new SignatureFitness(random, activations, data2);
             //List<double[][]> activated = sig_fit.activate_features(activations);
             score = sig_fit.totalFitness();
-            score1 = sig_fit1.totalFitness();
-            score2 = sig_fit2.totalFitness();
-            return (score+score1+score2)*10;
+            //score1 = sig_fit1.totalFitness();
+            //score2 = sig_fit2.totalFitness();
+            return score*100;
 
         }
 
         static void Main(string[] args)
         {
-            /*var metric = new DataPoint();
-            double[] v1 = { 1, 2, 3 , 4, 5, 6};
-            double[] v2 = { 2, 8, 6 };
-
-            Console.WriteLine(Vector_Similarity.Cosine(v1, v2));
-            Console.ReadLine();
-            */
-            /*List<List<double>> csv = ReadingCSV.Parse(@"C:\pobrane\deskryptory\22\descriptors_user_3.csv");
-            Person person1 = new Person(@"C:\pobrane\deskryptory\22\descriptors_user_3.csv");
-            int[] activ = { 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,0};
-            //double[,] full_signatures = person1.choose_features(activ);
-            SignatureFitness sig = new SignatureFitness();
-            List<double[][]> res = sig.activate_features(activ);
-            sig.totalFitness();
-            double[][] chosen = person1.choose_features(activ);
-            double[] scores = person1.similarity_score(person1.fullSignatures[0].ToArray());
-            Console.ReadLine();*/
+            
+            
             Program prop = new Program();
             prop.Start();
             prop.Update();
+            Console.WriteLine("Test results: ");
+            prop.Test();
             Console.ReadLine();
 
 
         }
 
-        /*void Parse() {
-            var path = @"C:\descriptors_user_3.csv";
-            //var features_csv = new List<List<double>>();
-            using (TextFieldParser csvParser = new TextFieldParser(path))
-            {
-                csvParser.CommentTokens = new string[] { "#" };
-                csvParser.SetDelimiters(new string[] { ";" });
-                csvParser.HasFieldsEnclosedInQuotes = true;
-
-                // Skip the row with the column names
-                csvParser.ReadLine();
-
-                while (!csvParser.EndOfData)
-                {
-                    // Read current line fields, pointer moves to the next line.
-                    var values = new List<double>();
-                    string[] fields = csvParser.ReadFields();
-                    
-                    foreach (string field in fields){
-
-                        values.Add(Convert.ToDouble(field));
-                    }
-                    //features_csv.Add(values);
-
-                   
-                }
-            }*/
+        
 
     }
 }
