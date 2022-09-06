@@ -73,7 +73,7 @@ namespace classical_genetic
 
             }
         }
-        public double totalFitness()
+        public double totalFitness(int n)
         {
             this.meansStds();
             double[] totalFitness = new double[currActivations.Length];
@@ -86,7 +86,7 @@ namespace classical_genetic
                     ones += 1;
                 }
             }
-            int n = 3;
+            //int n = 3;
             double similarity_score_accu = 0;
             double dissimilarity_score_accu = 0;
                 for (int k = 0; k < Persons[n].currFeatures.GetLength(0); k++)

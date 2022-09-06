@@ -11,7 +11,6 @@ namespace classical_genetic
         public List<DNA<T>> Population { get; private set; }
         public int Generation { get; private set; }
         public int Elitism;
-        public double[][] Features;
         public double fitnessMean;
         public double BestFitness { get; private set; }
         private List<DNA<T>> newPopulation;
@@ -23,7 +22,7 @@ namespace classical_genetic
         private double[] fitnesses;
         private Func<T> getRandomGene;
         private Func<int, double> fitnessFunction;
-        public GeneticAlgorithm(int populationSize, int dnaSize, Random random, Func<T> getRandomGene, Func<int,double> fitnessFunction, double[][] Features, int elitism, float mutationRate = 0.01f )
+        public GeneticAlgorithm(int populationSize, int dnaSize, Random random, Func<T> getRandomGene, Func<int,double> fitnessFunction, int elitism, float mutationRate = 0.01f )
         {
             Generation = 1;
             Elitism = elitism;
@@ -38,7 +37,7 @@ namespace classical_genetic
             BestGenes = new T[dnaSize];
             for (int i = 0; i< populationSize; i++)
             {
-                Population.Add(new DNA<T>(dnaSize, random, getRandomGene, fitnessFunction, Features,shouldInitGenes: true));
+                Population.Add(new DNA<T>(dnaSize, random, getRandomGene, fitnessFunction, shouldInitGenes: true));
             }
             
         }

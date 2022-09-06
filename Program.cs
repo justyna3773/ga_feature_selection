@@ -18,20 +18,14 @@ namespace classical_genetic
     {
         private GeneticAlgorithm<double> ga;
         private Random random;
+        private int ind = 3;
         void Start()
         {
             int populationSize = 30;
             float mutationRate = 0.1f;
-            double[][] features = new double[][]
-            {
-            new double[] { 1,0,0,1,1},
-            new double[] { 0,0,1,0,1},
-            new double[] { 1,1,1,1,0},
-            new double[] { 0,1,1,0,0},
-            new double[] { 0,0,0,0,0},
-            };
+            
             random = new System.Random();
-            ga = new GeneticAlgorithm<double>(populationSize, 16, random, getRandomBit, FitnessFunction, features, 16, mutationRate);
+            ga = new GeneticAlgorithm<double>(populationSize, 16, random, getRandomBit, FitnessFunction, 16, mutationRate);
             ga.CalculateFitness();
 
         }
@@ -122,7 +116,7 @@ namespace classical_genetic
             int[] activations = dna.Genes.Select(x => (int)x).ToArray();
             SignatureFitness sig_fit = new SignatureFitness();
             List<double[][]> activated = sig_fit.activate_features(activations);
-            score = sig_fit.totalFitness();
+            score = sig_fit.totalFitness(ind);
             return score;
 
         }
