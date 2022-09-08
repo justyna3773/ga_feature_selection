@@ -249,7 +249,7 @@ namespace classical_genetic
             int k = 9;
             foreach (double[] samp in this.testingData)
             {
-                int predicted = KNNProgram.Classify(samp, this.trainingData,
+                int predicted = KNN.Classify(samp, this.trainingData,
                   numClasses, k);
                 if (predicted == samp.Last()) {
                     if (predicted == 1) { sum_correct_ones += 1; }

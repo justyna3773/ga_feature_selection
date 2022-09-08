@@ -103,7 +103,7 @@ namespace classical_genetic
                 int total_pred = testing.activatedTesting.GetLength(0);
                 foreach (double[] samp in testing.activatedTesting)
                 {
-                    int predicted = KNNProgram.Classify(samp, testing.activatedTraining,
+                    int predicted = KNN.Classify(samp, testing.activatedTraining,
                       numClasses, k);
                     if (predicted == samp.Last())
                     {

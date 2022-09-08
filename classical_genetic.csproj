@@ -204,19 +204,16 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DataPoint.cs" />
     <Compile Include="Dataset.cs" />
     <Compile Include="DNA.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="GeneticAlgorithm.cs" />
-    <Compile Include="IndexAndDistance.cs" />
-    <Compile Include="KNNProgram.cs" />
+    <Compile Include="KNN.cs" />
     <Compile Include="Person.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReadingCSV.cs" />
     <Compile Include="SignatureFitness.cs" />
-    <Compile Include="Vector_Similarity.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
